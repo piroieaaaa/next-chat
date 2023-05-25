@@ -9,13 +9,12 @@ const Home: NextPage = () => {
   useEffect(() => {
     const initWebSocket = async() =>{
       await fetch('/api/socket')
+      socket = io()
+      socket.on('connect', () => {
+        console.log('server connected')
+      })
     }
     initWebSocket();
-    socket = io();
-    socket.on('connect', () => {
-      console.log('server connected')
-    })
-
   }, [])
 
   return (
