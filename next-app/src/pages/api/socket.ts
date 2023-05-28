@@ -19,7 +19,10 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponseWithSocket ) => 
     if (res.socket.server.io) {
         console.log('Socket is already running')
     } else {
-        const io = new IOServer(res.socket.server)
+        const io = new IOServer(res.socket.server, {
+            path: "/api/socket_io",
+            addTrailingSlash: false
+        });
 
         io.on('connection', socket => {
             socket.broadcast.emit('a user connected')

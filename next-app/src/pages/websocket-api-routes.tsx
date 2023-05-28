@@ -10,7 +10,9 @@ const Home: NextPage = () => {
       await fetch('/api/socket')
     }
     initWebSocket();
-    const socket = io()
+    const socket = io({
+      path: "/api/socket_io",
+    })
 
     socket.on('connect', () => {
       console.log('connect')
