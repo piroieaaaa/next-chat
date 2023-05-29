@@ -1,6 +1,11 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest } from 'next'
+import type {NextApiResponseWithSocket} from '@/types/websocket'
 
-const ChatHandler = (req: NextApiRequest, res: NextApiResponse ) => {
-    res.status(200).json({ name: 'John Doe' });
+const ChatHandler = (req: NextApiRequest, res: NextApiResponseWithSocket ) => {
+    if (res.socket.server.io !== undefined) {
+        res.socket.server.io.emit('receive_message', { message: 'api routes!' });
+    }
+
+    res.end()
 }
 export default ChatHandler
