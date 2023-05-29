@@ -25,9 +25,11 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponseWithSocket ) => 
         });
 
         io.on('connection', socket => {
-            socket.broadcast.emit('a user connected')
-            socket.on('hello', msg => {
-                socket.emit('hello', 'world!')
+            console.log('a user connected');
+            socket.emit('hello', 'world!')
+            socket.on('send_message', message => {
+                console.log(message);
+                io.emit('receive_message', message);
             })
         })
 
