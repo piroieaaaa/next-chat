@@ -41,6 +41,11 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponseWithSocket ) => 
                 // 全てのクライアントに送信
                 io.emit('receive_message', message);
             })
+
+            // クライアント切断時
+            socket.on("disconnect", (reason) => {
+                console.log(`a user disconnected. ${reason}`)
+            })
         })
 
         // NextのAPI RoutesにWebSocketサーバーを設定

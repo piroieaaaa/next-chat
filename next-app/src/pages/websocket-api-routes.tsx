@@ -53,6 +53,11 @@ const Home: NextPage = () => {
 
      // socketを維持するためにuseStateに保持。
     setSocket(client);
+
+    return () => {
+      console.log('Disconnecting..');
+      socket?.disconnect()
+    }
   }, [])
 
   // WebSocketを使ってサーバーにメッセージ送信
