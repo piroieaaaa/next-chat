@@ -4,11 +4,12 @@ import { useState, useEffect, useRef } from "react";
 import styles from "@/styles/Chat.module.css";
 import io from "socket.io-client";
 import type { Socket } from 'socket.io-client'
+import type {ClientToServerEvents, ServerToClientEvents} from '@/types/websocket'
 
-const Home: NextPage = () => {
+const Chat: NextPage = () => {
   const [message, setMessage] = useState<string>("");
-  const [list, setList] = useState<string[]>([]);
-  const [socket, setSocket] = useState<Socket | undefined>(undefined);  // socketを維持するためにuseStateにする必要有り。ただの変数にしていると、undefinedになってしまう。
+  const [history, setHistory] = useState<string[]>([]);
+  const [socket, setSocket] = useState<Socket<ServerToClientEvents, ClientToServerEvents> | undefined>(undefined);  // socketを維持するためにuseStateにする必要有り。ただの変数にしていると、undefinedになってしまう。
   const initWebSocketRef = useRef(false);
 
   // WebSocketの接続
@@ -19,34 +20,34 @@ const Home: NextPage = () => {
     }
     initWebSocketRef.current = true;
 
-    // WebSocketサーバーの起動（既に起動されていたら、なにもしない）
+    // WebSocketサーバーの設定
     const initWebSocket = async() =>{
-      await fetch('/api/socket')
+      await fetch('/api/create-websocket')
     }
     initWebSocket();
 
     // WebSocketの作成
-    const client = io({
-      // Next ver13以降では指定しないとエラーになる（https://github.com/vercel/next.js/issues/49334）
-      path: "/api/socket_io",
+    const client: Socket<ServerToClientEvents, ClientToServerEvents> = io({
+      // Next ver13以降ではpathを指定しないとエラーになる（https://github.com/vercel/next.js/issues/49334）
+      path: "/api/create-websocket",
     })
 
-    // サーバーに接続
+    // サーバーに接続時の動作設定
     client.on('connect', () => {
       console.log('connect')
     })
 
-    // hello受信時
-    client.on('hello', data => {
-      console.log(`received server hello! data:${data}`)
+    // hello受信時の動作設定
+    client.on('hello', () => {
+      console.log(`received server hello!`)
     })
 
-    // receive_message受信時
-    client.on("receive_message", (data:{message: string}) => {
-      setList(current => [...current, data.message]);
+    // chat受信時の動作設定
+    client.on("chat", message => {
+      setHistory(current => [message, ...current]);
     });
 
-    // サーバー切断時
+    // サーバー切断時の動作設定
     client.on('disconnect', () => {
       console.log('disconnect')
     })
@@ -55,20 +56,22 @@ const Home: NextPage = () => {
     setSocket(client);
 
     return () => {
-      console.log('Disconnecting..');
-      socket?.disconnect()
+      if (socket !== undefined) {
+        console.log('Disconnecting..');
+        socket.disconnect()
+      }
     }
   }, [])
 
-  // WebSocketを使ってサーバーにメッセージ送信
+  // WebSocketサーバーにchat送信
   const handleSendMessage = () => {
     if (socket !== undefined) {
-      socket.emit("send_message", { message: message });
+      socket.emit("chat", message);
     }
   };
 
   return (
-    <div className={styles.container}>
+    <>
       <Head>
         <title>チャットアプリ</title>
       </Head>
@@ -93,15 +96,15 @@ const Home: NextPage = () => {
           </button>
         </div>
         <div>
-          {list.map((chat, i) => (
-            <div key={i} className={styles.chatArea}>
-              {chat}
+          {history.map((message, index) => (
+            <div key={index} className={styles.chatArea}>
+              {message}
             </div>
           ))}
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
-export default Home;
+export default Chat;

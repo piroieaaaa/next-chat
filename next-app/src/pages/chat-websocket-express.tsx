@@ -6,7 +6,7 @@ import io from "socket.io-client";
 
 const socket = io("http://localhost:5000");
 
-const Home: NextPage = () => {
+const Chat: NextPage = () => {
   const [message, setMessage] = useState<string>("");
   const [list, setList] = useState<string[]>([]);
 
@@ -57,4 +57,4 @@ const Home: NextPage = () => {
   );
 }
 
-export default Home;
+export default Chat;

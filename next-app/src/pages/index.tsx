@@ -6,10 +6,10 @@ const Home: NextPage = () => {
   return (
     <>
       <div>
-        <Link href="/websocket-express">EXPRESS</Link>
+        <Link href="/chat-websocket-express">EXPRESS</Link>
       </div>
       <div>
-      <Link href="/websocket-api-routes">API Routes</Link>
+      <Link href="/chat-websocket">API Routes</Link>
       </div>
     </>
   )
