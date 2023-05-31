@@ -2,15 +2,15 @@ import type { NextPage } from 'next'
 import Head from "next/head";
 import {Chat} from "@/components/chat"
 
-const ChatWebSocket: NextPage = () => {
+const ChatWebSocketAndPost: NextPage = () => {
   return (
     <>
       <Head>
-        <title>API Routes(WebSocket)</title>
+        <title>API Routes(WebSocket&POST)</title>
       </Head>
-      <Chat serverSendType="WebSocket"/>
+      <Chat serverSendType="POST"/>
     </>
   );
 }
 
-export default ChatWebSocket;
+export default ChatWebSocketAndPost;

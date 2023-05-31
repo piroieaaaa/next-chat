@@ -26,11 +26,11 @@ export interface ClientToServerEvents {
 }
 
 
-export interface InterServerEvents {
-    ping: () => void;
-}
+// export interface InterServerEvents {
+//     ping: () => void;
+// }
 
-export   interface SocketData {
-    name: string;
-    age: number;
-}
+// export   interface SocketData {
+//     name: string;
+//     age: number;
+// }

@@ -7,8 +7,7 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponseWithSocket ) => 
     // 既に設定済みの場合、何もしない
     if (res.socket.server.io) {
         console.log('Socket is already running')
-        res.end()
-        return;
+        return res.end()
     }
 
     // WebSocketサーバーを生成
@@ -43,7 +42,7 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponseWithSocket ) => 
     res.socket.server.io = io
 
     // API Routesを終了させるために必要
-    res.end()
+    return res.end()
 }
 
 // export const config = {
