@@ -38,7 +38,7 @@ const handlePost = (req: NextApiRequest, res: NextApiResponseWithSocket ) => {
     // POSTの内容を全クライアントに送信
     io.emit('chat', message);
 
-    res.status(200).json({message: `Success`})
+    return res.status(200).json({message: `Success`})
 }
 
 
