@@ -1,0 +1,32 @@
+GET http://localhost:3000/api/send-chat
+###
+
+POST http://localhost:3000/api/send-chat
+Content-Type: application/json
+
+{
+    "error": "post message!"
+}
+###
+
+POST http://localhost:3000/api/send-chat
+Content-Type: application/json
+
+{
+    "message": "post message!"
+}
+###
+POST http://localhost:3000/api/send-chat
+Content-Type: application/json
+
+{
+    "message": ""
+}
+###
+
+POST http://localhost:3000/api/send-chat
+Content-Type: application/xml
+
+<request>
+    <message>post message!</message>
+</request>
