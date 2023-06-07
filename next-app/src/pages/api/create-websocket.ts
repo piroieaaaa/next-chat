@@ -4,45 +4,50 @@ import type {NextApiResponseWithSocket, ClientToServerEvents, ServerToClientEven
 
 // ServerのWebSocketを設定する
 const SocketHandler = (req: NextApiRequest, res: NextApiResponseWithSocket ) => {
-    // 既に設定済みの場合、何もしない
+    console.log('start api/create-websocket');
+
     if (res.socket.server.io) {
-        console.log('Socket is already running')
-        return res.end()
+        console.log('Socket is already running');
+    }else{
+        console.log("Socket is initializing");
+
+        // WebSocketサーバーを生成
+        const io = new IOServer<ClientToServerEvents, ServerToClientEvents>(
+            res.socket.server,
+            // Next ver13以降ではpathとaddTrailingSlashを指定しないとエラーになる（https://github.com/vercel/next.js/issues/49334）
+            {
+                path: "/api/create-websocket",
+                addTrailingSlash: false
+            }
+        );
+
+        // クライアント接続時の動作設定
+        io.on('connection', socket => {
+            console.log('a user connected');
+
+            // 接続したクライアントにhelloを送信
+            socket.emit('hello')
+
+            // chat受信時の動作設定
+            socket.on('chat', message => {
+                console.log(`chat receive: ${message}`);
+
+                // 全てのクライアントにchatを送信
+                io.emit('chat', message);
+            })
+
+            // クライアント切断時の動作設定
+            socket.on("disconnect", (reason) => {
+                console.log(`a user disconnected. ${reason}`)
+            })
+        })
+
+        // NextのAPI RoutesにWebSocketサーバーを設定
+        res.socket.server.io = io
     }
 
-    // WebSocketサーバーを生成
-    const io = new IOServer<ClientToServerEvents, ServerToClientEvents>(res.socket.server, {
-        // Next ver13以降ではpathとaddTrailingSlashを指定しないとエラーになる（https://github.com/vercel/next.js/issues/49334）
-        path: "/api/create-websocket",
-        addTrailingSlash: false
-    });
-
-    // クライアント接続時の動作設定
-    io.on('connection', socket => {
-        console.log('a user connected');
-
-        // 接続したクライアントにhelloを送信
-        socket.emit('hello')
-
-        // chat受信時の動作設定
-        socket.on('chat', message => {
-            console.log(`chat receive: ${message}`);
-
-            // 全てのクライアントにchatを送信
-            io.emit('chat', message);
-        })
-
-        // クライアント切断時の動作設定
-        socket.on("disconnect", (reason) => {
-            console.log(`a user disconnected. ${reason}`)
-        })
-    })
-
-    // NextのAPI RoutesにWebSocketサーバーを設定
-    res.socket.server.io = io
-
     // API Routesを終了させるために必要
-    return res.end()
+    res.end();
 }
 
 // export const config = {

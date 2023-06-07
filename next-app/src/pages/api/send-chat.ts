@@ -5,7 +5,8 @@ import type {NextApiResponseWithSocket, ClientToServerEvents, ServerToClientEven
 const SendChatHandler = (req: NextApiRequest, res: NextApiResponseWithSocket ) => {
     // POST以外はエラー
     if (req.method !== 'POST') {
-        return res.status(405).end();
+        res.status(405).end();
+        return;
     }
 
     // WebSocketサーバーの起動確認
@@ -18,6 +19,6 @@ const SendChatHandler = (req: NextApiRequest, res: NextApiResponseWithSocket ) =
         io.emit('chat', req.body.message);
     }
 
-    return res.end();
+    res.end();
 }
 export default SendChatHandler

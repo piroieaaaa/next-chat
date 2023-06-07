@@ -15,23 +15,27 @@ export const Chat = ({serverSendType}: {serverSendType: ServerSendType}) => {
 
   // WebSocketの接続
   useEffect(() => {
+    console.log(`start useEffect. initWebSocketRef.current:${initWebSocketRef.current}`)
     // Nextは開発モードでは２回レンダリングされるようになっている（StrictMode）。useEffectが１回だけ実行されるようにuseRefを利用する。
     if(initWebSocketRef.current){
+      console.log('stop useEffect')
       return;
     }
     initWebSocketRef.current = true;
 
+    // Socket作成時にpathでAPIを指定していると、実行されるっぽい。/api/create-websocketが２度実行されてしまうので、こっちをコメントアウト。
     // WebSocketサーバーの設定
-    const initWebSocket = async() =>{
+    (async() =>{
       await fetch('/api/create-websocket')
-    }
-    initWebSocket();
+    })();
 
     // WebSocketの作成
-    const client: Socket<ServerToClientEvents, ClientToServerEvents> = io({
-      // Next ver13以降ではpathを指定しないとエラーになる（https://github.com/vercel/next.js/issues/49334）
-      path: "/api/create-websocket",
-    })
+    // const client: Socket<ServerToClientEvents, ClientToServerEvents> = io({
+    //   // Next ver13以降ではpathを指定しないとエラーになる（https://github.com/vercel/next.js/issues/49334）
+    //   path: "/api/create-websocket",
+    // })
+    const client: Socket<ServerToClientEvents, ClientToServerEvents> = io();
+    console.log('create Socket')
 
     // サーバーに接続時の動作設定
     client.on('connect', () => {
@@ -73,7 +77,7 @@ export const Chat = ({serverSendType}: {serverSendType: ServerSendType}) => {
 				}
 				break;
 			case "POST":
-				const send = async() => {
+				(async() => {
 					await fetch('/api/send-chat',{
 						method: 'POST',
 						headers: {
@@ -81,8 +85,7 @@ export const Chat = ({serverSendType}: {serverSendType: ServerSendType}) => {
 						},
 						body: JSON.stringify({ message: message }),
 					})
-				}
-				send();
+				})();
 			default:
 				break;
 		}
