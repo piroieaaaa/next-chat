@@ -1,3 +1,11 @@
+POST http://localhost:3000/api/send-chat
+Content-Type: application/json
+
+{
+    "message": "post message!"
+}
+###
+
 GET http://localhost:3000/api/send-chat
 ###
 
@@ -13,14 +21,16 @@ POST http://localhost:3000/api/send-chat
 Content-Type: application/json
 
 {
-    "message": "post message!"
+    "message": ""
 }
+
 ###
 POST http://localhost:3000/api/send-chat
 Content-Type: application/json
 
 {
-    "message": ""
+    "message": "post message!",
+    "test": "aiueo"
 }
 ###
 
