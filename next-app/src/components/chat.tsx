@@ -25,16 +25,15 @@ export const Chat = ({serverSendType}: {serverSendType: ServerSendType}) => {
 
     // Socket作成時にpathでAPIを指定していると、実行されるっぽい。/api/create-websocketが２度実行されてしまうので、こっちをコメントアウト。
     // WebSocketサーバーの設定
-    (async() =>{
-      await fetch('/api/create-websocket')
-    })();
+    // (async() =>{
+    //   await fetch('/api/create-websocket')
+    // })();
 
     // WebSocketの作成
-    // const client: Socket<ServerToClientEvents, ClientToServerEvents> = io({
-    //   // Next ver13以降ではpathを指定しないとエラーになる（https://github.com/vercel/next.js/issues/49334）
-    //   path: "/api/create-websocket",
-    // })
-    const client: Socket<ServerToClientEvents, ClientToServerEvents> = io();
+    const client: Socket<ServerToClientEvents, ClientToServerEvents> = io({
+      // Next ver13以降ではpathを指定しないとエラーになる（https://github.com/vercel/next.js/issues/49334）
+      path: "/api/create-websocket",
+    })
     console.log('create Socket')
 
     // サーバーに接続時の動作設定
